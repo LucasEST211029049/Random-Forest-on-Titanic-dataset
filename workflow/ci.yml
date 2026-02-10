@@ -1,0 +1,38 @@
+# GitHub Actions Workflow for ML Pipeline
+# This file defines automated CI/CD for machine learning projects
+name: Titanic ML CI Pipeline
+
+# TRIGGERS: When should this workflow run?
+on:
+  push:
+    branches: [ main ]      # Run when code is pushed to main branch
+  pull_request:
+    branches: [ main ]      # Run when PR is created targeting main branch
+
+# JOBS: Define what tasks to execute
+jobs:
+  build-and-train:          # Job name (can have multiple jobs)
+    runs-on: ubuntu-latest  # Virtual machine to run on (GitHub-hosted runner)
+
+    # STEPS: Sequential tasks within the job
+    steps:
+      # Step 1: Get the source code
+      - name: Checkout repo
+        uses: actions/checkout@v3  # Pre-built action to download repository code
+
+      # Step 2: Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v4  # Pre-built action to install Python
+        with:
+          python-version: '3.10'     # Specify exact Python version
+
+      # Step 3: Install project dependencies
+      - name: Install dependencies
+        run: |                          # Multi-line shell commands
+          python -m pip install --upgrade pip  # Upgrade pip package manager
+          pip install -r requirements.txt      # Install all project dependencies
+
+      # Step 4: Execute ML training pipeline
+      - name: Run training script
+        run: |
+          cd scripts/ && python train_model.py        # Run our machine learning training
